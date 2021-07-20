@@ -66,7 +66,7 @@ def extractCircle(line, xs, ys, zs, clockwise):
     endZ = startZ
     radius = np.sqrt(I * I + J * J)
 
-    print(I, J)
+    # print(I, J)
 
     plotXs, plotYs, plotZs = plotArc(I + startX, J + startY, radius, startX, startY, endX, endY, startZ, clockwise)
 
