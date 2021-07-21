@@ -14,11 +14,16 @@ class Machine:
         self.mainWindow = mainWindow
         self.mainWindow.coordinatesWidget.machinePositionSetter = self.setPosition
         self.mainWindow.fileWidget.gcodeSetter = self.loadGCode
+        self.mainWindow.programWidget.startProgramFunction = self.startProgram
+        self.mainWindow.programWidget.pauseProgramFunction = self.pause
+        self.mainWindow.programWidget.resumeProgramFunction = self.resume
+        self.mainWindow.programWidget.endProgramFunction = self.end
         self._bindJogButtons()
         self.gcode = None
 
         self.cnc = printcore()
         self.cnc.connect('COM3', 115200, True)
+        self.cnc.endcb = self.mainWindow.programWidget.programDone()
 
         self.x = 0.0
         self.y = 0.0
@@ -97,7 +102,7 @@ class Machine:
             self.mainWindow.graphWidget.axes.plot(xs, ys, zs)
         self.mainWindow.graphWidget.fig.canvas.draw()
 
-    def startPrint(self):
+    def startProgram(self):
         if not self.cnc.online:
             print("CNC Machine not online")
         else:
@@ -108,6 +113,9 @@ class Machine:
 
     def resume(self):
         self.cnc.resume()
+
+    def end(self):
+        self.cnc.cancelprint()
 
     def setPosition(self, x=None, y=None, z=None):
         command = "G0"

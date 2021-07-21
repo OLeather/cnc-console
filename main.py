@@ -10,6 +10,7 @@ from GCode import plotGcode
 from GraphWidget import GraphWidget
 from JogWidget import JogWidget
 from Machine import Machine
+from ProgramManagerWidget import ProgramManagerWidget
 from ZeroWidget import ZeroWidget
 
 matplotlib.use('Qt5Agg')
@@ -32,17 +33,22 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.graphWidget = GraphWidget(self)
         self.fileWidget = FileLoaderWidget(self)
+        self.programWidget = ProgramManagerWidget(self)
         self.jogWidget = JogWidget(self)
         self.zeroWidget = ZeroWidget(self)
         self.coordinatesWidget = CoordinatesWidget(MainWindow, self)
         vLayout = QVBoxLayout()
-        vLayout.addWidget(self.fileWidget)
+        vLayout.addWidget(self.coordinatesWidget)
+        vLayout.addWidget(self.programWidget)
         vLayout.addWidget(self.jogWidget)
         vLayout.addWidget(self.zeroWidget)
-        vLayout.addWidget(self.coordinatesWidget)
+
+        vLayout1 = QVBoxLayout()
+        vLayout1.addWidget(self.fileWidget)
+        vLayout1.addWidget(self.graphWidget)
         layout = QHBoxLayout()
         layout.addLayout(vLayout)
-        layout.addWidget(self.graphWidget)
+        layout.addLayout(vLayout1)
 
         widget = QWidget()
         widget.setLayout(layout)
