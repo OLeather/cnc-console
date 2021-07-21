@@ -1,6 +1,8 @@
 import sys
+from time import sleep
+
 import matplotlib
-from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QPushButton, QWidget
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QPushButton, QWidget, QApplication
 
 from CoordinatesWidget import CoordinatesWidget
 from GCode import plotGcode
@@ -21,9 +23,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
+        font = self.font()
+        font.setPointSize(12)
+        # set the font for *any* widget created in this QApplication:
+        QApplication.instance().setFont(font)
 
         self.graphWidget = GraphWidget(self)
-
         self.jogWidget = JogWidget(self)
         self.coordinatesWidget = CoordinatesWidget(MainWindow, self)
         vLayout = QVBoxLayout()
@@ -44,5 +49,7 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     w = MainWindow()
     m = Machine(w)
+    m.zero(True, True, True)
     m.loadGCode("gcode1.gcode")
     app.exec_()
+

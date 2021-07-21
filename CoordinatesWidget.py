@@ -36,7 +36,6 @@ class CoordinatesWidget(QWidget):
         self.ySetField.setReadOnly(True)
         self.zSetField.setReadOnly(True)
 
-
         self.xActualField.setText(str(self.x) + " mm")
         self.yActualField.setText(str(self.y) + " mm")
         self.zActualField.setText(str(self.z) + " mm")
@@ -87,34 +86,35 @@ class CoordinatesWidget(QWidget):
 
     def setPressed(self):
         text = ""
-        setter = self.setDesiredX
+        setter = self.setDesiredXText
+        value = "Cancel"
         if self.sender() == self.xSet:
-            text = "X:"
-            setter = self.setDesiredX
+            value = NumpadDialog.getValue(self, "X:")
+            if value != "Cancel" and isfloat(value):
+                self.setDesiredXText(float(value))
+                self.machinePositionSetter(x=float(value))
         if self.sender() == self.ySet:
-            text = "Y:"
-            setter = self.setDesiredY
+            value = NumpadDialog.getValue(self, "Y:")
+            if value != "Cancel" and isfloat(value):
+                self.setDesiredYText(float(value))
+                self.machinePositionSetter(y=float(value))
         if self.sender() == self.zSet:
-            text = "Z:"
-            setter = self.setDesiredZ
-        value = NumpadDialog.getValue(self, text)
-        if value != "Cancel" and isfloat(value):
-            setter(float(value))
+            value = NumpadDialog.getValue(self, "Z:")
+            if value != "Cancel" and isfloat(value):
+                self.setDesiredZText(float(value))
+                self.machinePositionSetter(z=float(value))
 
-    def setDesiredX(self, x):
+    def setDesiredXText(self, x):
         self.desiredX = x
         self.xSetField.setText(str(x) + " mm")
-        self.machinePositionSetter(x=self.desiredX)
 
-    def setDesiredY(self, y):
+    def setDesiredYText(self, y):
         self.desiredY = y
         self.ySetField.setText(str(y) + " mm")
-        self.machinePositionSetter(y=self.desiredY)
 
-    def setDesiredZ(self, z):
+    def setDesiredZText(self, z):
         self.desiredZ = z
         self.zSetField.setText(str(z) + " mm")
-        self.machinePositionSetter(z=self.desiredZ)
 
     def setActualX(self, x):
         self.x = x
@@ -127,5 +127,3 @@ class CoordinatesWidget(QWidget):
     def setActualZ(self, z):
         self.z = z
         self.zActualField.setText(str(z) + " mm")
-
-
