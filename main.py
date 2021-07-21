@@ -4,8 +4,9 @@ from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QPushButton, QWidget
 
 from CoordinatesWidget import CoordinatesWidget
 from GCode import plotGcode
-from GraphCanvas import GraphCanvas
+from GraphWidget import GraphWidget
 from JogWidget import JogWidget
+from Machine import Machine
 
 matplotlib.use('Qt5Agg')
 
@@ -21,18 +22,16 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
-        sc = GraphCanvas(self)
-        xs, ys, zs = plotGcode(open("gcode1.gcode"))
-        sc.axes.plot(xs, ys, zs)
+        self.graphWidget = GraphWidget(self)
 
-        jogWidget = JogWidget(self)
-        coordinatesWidget = CoordinatesWidget(MainWindow, self)
+        self.jogWidget = JogWidget(self)
+        self.coordinatesWidget = CoordinatesWidget(MainWindow, self)
         vLayout = QVBoxLayout()
-        vLayout.addWidget(jogWidget)
-        vLayout.addWidget(coordinatesWidget)
+        vLayout.addWidget(self.jogWidget)
+        vLayout.addWidget(self.coordinatesWidget)
         layout = QHBoxLayout()
         layout.addLayout(vLayout)
-        layout.addWidget(sc)
+        layout.addWidget(self.graphWidget)
 
         widget = QWidget()
         widget.setLayout(layout)
@@ -41,6 +40,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show()
 
 
-app = QtWidgets.QApplication(sys.argv)
-w = MainWindow()
-app.exec_()
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    w = MainWindow()
+    m = Machine(w)
+    m.loadGCode("gcode1.gcode")
+    app.exec_()

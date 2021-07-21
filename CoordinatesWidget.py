@@ -11,21 +11,38 @@ class CoordinatesWidget(QWidget):
 
     def __init__(self, MainWindow, parent=None):
         super().__init__(parent)
+        self.machinePositionSetter = None
         self.MainWindow = MainWindow
-        self.xField = QLineEdit(self)
-        self.yField = QLineEdit(self)
-        self.zField = QLineEdit(self)
+        self.xSetField = QLineEdit(self)
+        self.ySetField = QLineEdit(self)
+        self.zSetField = QLineEdit(self)
+
+        self.xActualField = QLineEdit(self)
+        self.yActualField = QLineEdit(self)
+        self.zActualField = QLineEdit(self)
+
+        self.desiredX = 0.0
+        self.desiredY = 0.0
+        self.desiredZ = 0.0
 
         self.x = 0.0
         self.y = 0.0
         self.z = 0.0
 
-        self.xField.setText(str(self.x)  + " mm")
-        self.yField.setText(str(self.y)  + " mm")
-        self.zField.setText(str(self.z)  + " mm")
-        self.xField.setReadOnly(True)
-        self.yField.setReadOnly(True)
-        self.zField.setReadOnly(True)
+        self.xSetField.setText(str(self.desiredX) + " mm")
+        self.ySetField.setText(str(self.desiredY) + " mm")
+        self.zSetField.setText(str(self.desiredZ) + " mm")
+        self.xSetField.setReadOnly(True)
+        self.ySetField.setReadOnly(True)
+        self.zSetField.setReadOnly(True)
+
+
+        self.xActualField.setText(str(self.x) + " mm")
+        self.yActualField.setText(str(self.y) + " mm")
+        self.zActualField.setText(str(self.z) + " mm")
+        self.xActualField.setReadOnly(True)
+        self.yActualField.setReadOnly(True)
+        self.zActualField.setReadOnly(True)
 
         xText = QLabel("X:")
         zText = QLabel("Y:")
@@ -44,13 +61,16 @@ class CoordinatesWidget(QWidget):
         zLayout = QHBoxLayout()
 
         xLayout.addWidget(xText)
-        xLayout.addWidget(self.xField)
+        xLayout.addWidget(self.xActualField)
+        xLayout.addWidget(self.xSetField)
         xLayout.addWidget(self.xSet)
         yLayout.addWidget(yText)
-        yLayout.addWidget(self.yField)
+        yLayout.addWidget(self.yActualField)
+        yLayout.addWidget(self.ySetField)
         yLayout.addWidget(self.ySet)
         zLayout.addWidget(zText)
-        zLayout.addWidget(self.zField)
+        zLayout.addWidget(self.zActualField)
+        zLayout.addWidget(self.zSetField)
         zLayout.addWidget(self.zSet)
 
         layout = QVBoxLayout()
@@ -67,28 +87,45 @@ class CoordinatesWidget(QWidget):
 
     def setPressed(self):
         text = ""
-        setter = self.setX
+        setter = self.setDesiredX
         if self.sender() == self.xSet:
             text = "X:"
-            setter = self.setX
+            setter = self.setDesiredX
         if self.sender() == self.ySet:
             text = "Y:"
-            setter = self.setY
+            setter = self.setDesiredY
         if self.sender() == self.zSet:
             text = "Z:"
-            setter = self.setZ
+            setter = self.setDesiredZ
         value = NumpadDialog.getValue(self, text)
         if value != "Cancel" and isfloat(value):
             setter(float(value))
 
-    def setX(self, x):
+    def setDesiredX(self, x):
+        self.desiredX = x
+        self.xSetField.setText(str(x) + " mm")
+        self.machinePositionSetter(x=self.desiredX)
+
+    def setDesiredY(self, y):
+        self.desiredY = y
+        self.ySetField.setText(str(y) + " mm")
+        self.machinePositionSetter(y=self.desiredY)
+
+    def setDesiredZ(self, z):
+        self.desiredZ = z
+        self.zSetField.setText(str(z) + " mm")
+        self.machinePositionSetter(z=self.desiredZ)
+
+    def setActualX(self, x):
         self.x = x
-        self.xField.setText(str(x) + " mm")
+        self.xActualField.setText(str(x) + " mm")
 
-    def setY(self, y):
+    def setActualY(self, y):
         self.y = y
-        self.yField.setText(str(y) + " mm")
+        self.yActualField.setText(str(y) + " mm")
 
-    def setZ(self, z):
+    def setActualZ(self, z):
         self.z = z
-        self.zField.setText(str(z) + " mm")
+        self.zActualField.setText(str(z) + " mm")
+
+
