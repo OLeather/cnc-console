@@ -78,11 +78,7 @@ class CoordinatesWidget(QWidget):
         layout.addLayout(yLayout)
         layout.addLayout(zLayout)
 
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setLayout(layout)
-
-    def resizeEvent(self, e):
-        self.setMinimumWidth(self.height())
 
     def setPressed(self):
         text = ""
@@ -106,14 +102,17 @@ class CoordinatesWidget(QWidget):
 
     def setDesiredXText(self, x):
         self.desiredX = x
+        print(x)
         self.xSetField.setText(str(x) + " mm")
 
     def setDesiredYText(self, y):
         self.desiredY = y
+        print(y)
         self.ySetField.setText(str(y) + " mm")
 
     def setDesiredZText(self, z):
         self.desiredZ = z
+        print(z)
         self.zSetField.setText(str(z) + " mm")
 
     def setActualX(self, x):

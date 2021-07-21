@@ -13,14 +13,12 @@ class Machine:
     def __init__(self, mainWindow):
         self.mainWindow = mainWindow
         self.mainWindow.coordinatesWidget.machinePositionSetter = self.setPosition
+        self.mainWindow.fileWidget.gcodeSetter = self.loadGCode
         self._bindJogButtons()
         self.gcode = None
 
         self.cnc = printcore()
         self.cnc.connect('COM3', 115200, True)
-
-        while not self.cnc.online:
-            sleep(0.1)
 
         self.x = 0.0
         self.y = 0.0
@@ -35,9 +33,12 @@ class Machine:
         self.mainWindow.jogWidget.yMinusButton.clicked.connect(self.jogMinusY)
         self.mainWindow.jogWidget.zPlusButton.clicked.connect(self.jogPlusZ)
         self.mainWindow.jogWidget.zMinusButton.clicked.connect(self.jogMinusZ)
-        self.mainWindow.coordinatesWidget.xSet.clicked.connect(self.setXPressed)
-        self.mainWindow.coordinatesWidget.ySet.clicked.connect(self.setYPressed)
-        self.mainWindow.coordinatesWidget.zSet.clicked.connect(self.setZPressed)
+        self.mainWindow.zeroWidget.zeroXBtn.clicked.connect(self.zeroXPressed)
+        self.mainWindow.zeroWidget.zeroYBtn.clicked.connect(self.zeroYPressed)
+        self.mainWindow.zeroWidget.zeroZBtn.clicked.connect(self.zeroZPressed)
+        self.mainWindow.zeroWidget.zeroAllBtn.clicked.connect(self.zeroXPressed)
+        self.mainWindow.zeroWidget.zeroAllBtn.clicked.connect(self.zeroYPressed)
+        self.mainWindow.zeroWidget.zeroAllBtn.clicked.connect(self.zeroZPressed)
 
     def jogPlusX(self):
         self.mainWindow.coordinatesWidget.setDesiredXText(
@@ -69,17 +70,14 @@ class Machine:
             self.mainWindow.coordinatesWidget.desiredZ - self.mainWindow.jogWidget.step)
         self.setPosition(z=self.mainWindow.coordinatesWidget.desiredZ)
 
-    def setXPressed(self):
-        self.mainWindow.coordinatesWidget.setDesiredYText(
-            self.mainWindow.coordinatesWidget.desiredY - self.mainWindow.jogWidget.step)
+    def zeroXPressed(self):
+        self.zero(x=True)
 
-    def setYPressed(self):
-        self.mainWindow.coordinatesWidget.setDesiredZText(
-            self.mainWindow.coordinatesWidget.desiredZ + self.mainWindow.jogWidget.step)
+    def zeroYPressed(self):
+        self.zero(y=True)
 
-    def setZPressed(self):
-        self.mainWindow.coordinatesWidget.setDesiredZText(
-            self.mainWindow.coordinatesWidget.desiredZ - self.mainWindow.jogWidget.step)
+    def zeroZPressed(self):
+        self.zero(z=True)
 
     def run(self):
         while True:
@@ -90,10 +88,14 @@ class Machine:
             sleep(0.01)
 
     def loadGCode(self, path):
-        self.gcode = gcoder.LightGCode([i.strip() for i in open(path)])
         self.mainWindow.graphWidget.axes.cla()
-        xs, ys, zs = plotGcode(open(path))
-        self.mainWindow.graphWidget.axes.plot(xs, ys, zs)
+        if path is "":
+            self.gcode = None
+        else:
+            self.gcode = gcoder.LightGCode([i.strip() for i in open(path)])
+            xs, ys, zs = plotGcode(open(path))
+            self.mainWindow.graphWidget.axes.plot(xs, ys, zs)
+        self.mainWindow.graphWidget.fig.canvas.draw()
 
     def startPrint(self):
         if not self.cnc.online:
@@ -122,16 +124,16 @@ class Machine:
         self.cnc.send_now(command)
 
     def zero(self, x=False, y=False, z=False):
-        self.mainWindow.coordinatesWidget.setDesiredXText(0)
-        self.mainWindow.coordinatesWidget.setDesiredYText(0)
-        self.mainWindow.coordinatesWidget.setDesiredZText(0)
         command = "G92"
         if x:
             command += "X0"
+            self.mainWindow.coordinatesWidget.setDesiredXText(0.0)
         if y:
             command += "Y0"
+            self.mainWindow.coordinatesWidget.setDesiredYText(0.0)
         if z:
             command += "Z0"
+            self.mainWindow.coordinatesWidget.setDesiredZText(0.0)
         self.cnc.send_now(command)
 
     def _getAbsPos(self):

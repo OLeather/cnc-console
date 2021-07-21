@@ -5,10 +5,12 @@ import matplotlib
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QPushButton, QWidget, QApplication
 
 from CoordinatesWidget import CoordinatesWidget
+from FileLoaderWidget import FileLoaderWidget
 from GCode import plotGcode
 from GraphWidget import GraphWidget
 from JogWidget import JogWidget
 from Machine import Machine
+from ZeroWidget import ZeroWidget
 
 matplotlib.use('Qt5Agg')
 
@@ -29,10 +31,14 @@ class MainWindow(QtWidgets.QMainWindow):
         QApplication.instance().setFont(font)
 
         self.graphWidget = GraphWidget(self)
+        self.fileWidget = FileLoaderWidget(self)
         self.jogWidget = JogWidget(self)
+        self.zeroWidget = ZeroWidget(self)
         self.coordinatesWidget = CoordinatesWidget(MainWindow, self)
         vLayout = QVBoxLayout()
+        vLayout.addWidget(self.fileWidget)
         vLayout.addWidget(self.jogWidget)
+        vLayout.addWidget(self.zeroWidget)
         vLayout.addWidget(self.coordinatesWidget)
         layout = QHBoxLayout()
         layout.addLayout(vLayout)
@@ -50,6 +56,4 @@ if __name__ == '__main__':
     w = MainWindow()
     m = Machine(w)
     m.zero(True, True, True)
-    m.loadGCode("gcode1.gcode")
     app.exec_()
-
