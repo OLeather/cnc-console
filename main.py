@@ -1,12 +1,10 @@
 import sys
-from time import sleep
 
 import matplotlib
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QPushButton, QWidget, QApplication
 
 from CoordinatesWidget import CoordinatesWidget
 from FileLoaderWidget import FileLoaderWidget
-from GCode import plotGcode
 from GraphWidget import GraphWidget
 from JogWidget import JogWidget
 from Machine import Machine

@@ -1,7 +1,5 @@
-import re
 import numpy as np
 from gcodeparser import GcodeParser, GcodeLine, Commands
-from printrun import printcore
 
 
 def plotGcode(gcode):

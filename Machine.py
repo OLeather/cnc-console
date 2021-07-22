@@ -1,11 +1,8 @@
-import logging
-import traceback
 from threading import Thread
 from time import sleep
 
-from numpy.random import randint
-from printrun import gcoder
-from printrun.printcore import printcore
+from Printrun.printrun import gcoder
+from Printrun.printrun.printcore import printcore
 
 from GCode import plotGcode
 
