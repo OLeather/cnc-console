@@ -1,5 +1,5 @@
 import sys
-
+sys.path.append("Printrun")
 import matplotlib
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QPushButton, QWidget, QApplication
 
