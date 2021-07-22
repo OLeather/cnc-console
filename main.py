@@ -63,3 +63,4 @@ if __name__ == '__main__':
     m = Machine(w)
     m.zero(True, True, True)
     app.exec_()
+    m.cnc.disconnect()

@@ -17,35 +17,25 @@ class CoordinatesWidget(QWidget):
         self.ySetField = QLineEdit(self)
         self.zSetField = QLineEdit(self)
 
-        self.xActualField = QLineEdit(self)
-        self.yActualField = QLineEdit(self)
-        self.zActualField = QLineEdit(self)
-
-        self.desiredX = 0.0
-        self.desiredY = 0.0
-        self.desiredZ = 0.0
+        self.x = 0.0
+        self.y = 0.0
+        self.z = 0.0
 
         self.x = 0.0
         self.y = 0.0
         self.z = 0.0
 
-        self.xSetField.setText(str(self.desiredX) + " mm")
-        self.ySetField.setText(str(self.desiredY) + " mm")
-        self.zSetField.setText(str(self.desiredZ) + " mm")
+        self.xSetField.setText(str(self.x) + " mm")
+        self.ySetField.setText(str(self.y) + " mm")
+        self.zSetField.setText(str(self.z) + " mm")
         self.xSetField.setReadOnly(True)
         self.ySetField.setReadOnly(True)
         self.zSetField.setReadOnly(True)
 
-        self.xActualField.setText(str(self.x) + " mm")
-        self.yActualField.setText(str(self.y) + " mm")
-        self.zActualField.setText(str(self.z) + " mm")
-        self.xActualField.setReadOnly(True)
-        self.yActualField.setReadOnly(True)
-        self.zActualField.setReadOnly(True)
 
         xText = QLabel("X:")
-        zText = QLabel("Y:")
-        yText = QLabel("Z:")
+        yText = QLabel("Y:")
+        zText = QLabel("Z:")
 
         self.xSet = QPushButton("Set")
         self.ySet = QPushButton("Set")
@@ -60,15 +50,12 @@ class CoordinatesWidget(QWidget):
         zLayout = QHBoxLayout()
 
         xLayout.addWidget(xText)
-        xLayout.addWidget(self.xActualField)
         xLayout.addWidget(self.xSetField)
         xLayout.addWidget(self.xSet)
         yLayout.addWidget(yText)
-        yLayout.addWidget(self.yActualField)
         yLayout.addWidget(self.ySetField)
         yLayout.addWidget(self.ySet)
         zLayout.addWidget(zText)
-        zLayout.addWidget(self.zActualField)
         zLayout.addWidget(self.zSetField)
         zLayout.addWidget(self.zSet)
 
@@ -82,47 +69,32 @@ class CoordinatesWidget(QWidget):
 
     def setPressed(self):
         text = ""
-        setter = self.setDesiredXText
+        setter = self.setXText
         value = "Cancel"
         if self.sender() == self.xSet:
             value = NumpadDialog.getValue(self, "X:")
             if value != "Cancel" and isfloat(value):
-                self.setDesiredXText(float(value))
+                self.setXText(float(value))
                 self.machinePositionSetter(x=float(value))
         if self.sender() == self.ySet:
             value = NumpadDialog.getValue(self, "Y:")
             if value != "Cancel" and isfloat(value):
-                self.setDesiredYText(float(value))
+                self.setYText(float(value))
                 self.machinePositionSetter(y=float(value))
         if self.sender() == self.zSet:
             value = NumpadDialog.getValue(self, "Z:")
             if value != "Cancel" and isfloat(value):
-                self.setDesiredZText(float(value))
+                self.setZText(float(value))
                 self.machinePositionSetter(z=float(value))
 
-    def setDesiredXText(self, x):
-        self.desiredX = x
-        print(x)
+    def setXText(self, x):
+        self.x = x
         self.xSetField.setText(str(x) + " mm")
 
-    def setDesiredYText(self, y):
-        self.desiredY = y
-        print(y)
+    def setYText(self, y):
+        self.y = y
         self.ySetField.setText(str(y) + " mm")
 
-    def setDesiredZText(self, z):
-        self.desiredZ = z
-        print(z)
-        self.zSetField.setText(str(z) + " mm")
-
-    def setActualX(self, x):
-        self.x = x
-        self.xActualField.setText(str(x) + " mm")
-
-    def setActualY(self, y):
-        self.y = y
-        self.yActualField.setText(str(y) + " mm")
-
-    def setActualZ(self, z):
+    def setZText(self, z):
         self.z = z
-        self.zActualField.setText(str(z) + " mm")
+        self.zSetField.setText(str(z) + " mm")

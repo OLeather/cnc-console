@@ -1,3 +1,4 @@
+import logging
 import traceback
 from threading import Thread
 from time import sleep
@@ -23,6 +24,8 @@ class Machine:
 
         self.cnc = printcore()
         self.cnc.connect('COM3', 115200, True)
+        while not self.cnc.online:
+            sleep(.1)
         self.cnc.endcb = self.mainWindow.programWidget.programDone()
 
         self.x = 0.0
@@ -46,34 +49,22 @@ class Machine:
         self.mainWindow.zeroWidget.zeroAllBtn.clicked.connect(self.zeroZPressed)
 
     def jogPlusX(self):
-        self.mainWindow.coordinatesWidget.setDesiredXText(
-            self.mainWindow.coordinatesWidget.desiredX + self.mainWindow.jogWidget.step)
-        self.setPosition(x=self.mainWindow.coordinatesWidget.desiredX)
+        self.setPosition(x=self.cnc.analyzer.abs_x + self.mainWindow.jogWidget.step)
 
     def jogMinusX(self):
-        self.mainWindow.coordinatesWidget.setDesiredXText(
-            self.mainWindow.coordinatesWidget.desiredX - self.mainWindow.jogWidget.step)
-        self.setPosition(x=self.mainWindow.coordinatesWidget.desiredX)
+        self.setPosition(x=self.cnc.analyzer.abs_x - self.mainWindow.jogWidget.step)
 
     def jogPlusY(self):
-        self.mainWindow.coordinatesWidget.setDesiredYText(
-            self.mainWindow.coordinatesWidget.desiredY + self.mainWindow.jogWidget.step)
-        self.setPosition(y=self.mainWindow.coordinatesWidget.desiredY)
+        self.setPosition(y=self.cnc.analyzer.abs_y + self.mainWindow.jogWidget.step)
 
     def jogMinusY(self):
-        self.mainWindow.coordinatesWidget.setDesiredYText(
-            self.mainWindow.coordinatesWidget.desiredY - self.mainWindow.jogWidget.step)
-        self.setPosition(y=self.mainWindow.coordinatesWidget.desiredY)
+        self.setPosition(y=self.cnc.analyzer.abs_y - self.mainWindow.jogWidget.step)
 
     def jogPlusZ(self):
-        self.mainWindow.coordinatesWidget.setDesiredZText(
-            self.mainWindow.coordinatesWidget.desiredZ + self.mainWindow.jogWidget.step)
-        self.setPosition(z=self.mainWindow.coordinatesWidget.desiredZ)
+        self.setPosition(z=self.cnc.analyzer.abs_z + self.mainWindow.jogWidget.step)
 
     def jogMinusZ(self):
-        self.mainWindow.coordinatesWidget.setDesiredZText(
-            self.mainWindow.coordinatesWidget.desiredZ - self.mainWindow.jogWidget.step)
-        self.setPosition(z=self.mainWindow.coordinatesWidget.desiredZ)
+        self.setPosition(z=self.cnc.analyzer.abs_z - self.mainWindow.jogWidget.step)
 
     def zeroXPressed(self):
         self.zero(x=True)
@@ -86,11 +77,10 @@ class Machine:
 
     def run(self):
         while True:
-            self.x, self.y, self.z = self._getAbsPos()
-            self.mainWindow.coordinatesWidget.setActualX(self.x)
-            self.mainWindow.coordinatesWidget.setActualY(self.y)
-            self.mainWindow.coordinatesWidget.setActualZ(self.z)
-            sleep(0.01)
+            self.mainWindow.coordinatesWidget.setXText(self.cnc.analyzer.abs_x)
+            self.mainWindow.coordinatesWidget.setYText(self.cnc.analyzer.abs_y)
+            self.mainWindow.coordinatesWidget.setZText(self.cnc.analyzer.abs_z)
+            sleep(0.1)
 
     def loadGCode(self, path):
         self.mainWindow.graphWidget.axes.cla()
@@ -135,14 +125,8 @@ class Machine:
         command = "G92"
         if x:
             command += "X0"
-            self.mainWindow.coordinatesWidget.setDesiredXText(0.0)
         if y:
             command += "Y0"
-            self.mainWindow.coordinatesWidget.setDesiredYText(0.0)
         if z:
             command += "Z0"
-            self.mainWindow.coordinatesWidget.setDesiredZText(0.0)
         self.cnc.send_now(command)
-
-    def _getAbsPos(self):
-        return self.cnc.analyzer.abs_x, self.cnc.analyzer.abs_y, self.cnc.analyzer.abs_z
