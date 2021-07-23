@@ -1,8 +1,8 @@
 import sys
-sys.path.append("Printrun")
+from pathlib import Path
+sys.path.append(str(Path(__file__).absolute().parent) +  "/Printrun")
 import matplotlib
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QPushButton, QWidget, QApplication
-
 from CoordinatesWidget import CoordinatesWidget
 from FileLoaderWidget import FileLoaderWidget
 from GraphWidget import GraphWidget
@@ -52,7 +52,7 @@ class MainWindow(QtWidgets.QMainWindow):
         widget.setLayout(layout)
 
         self.setCentralWidget(widget)
-        self.show()
+        self.showMaximized()
 
 
 if __name__ == '__main__':
@@ -62,3 +62,4 @@ if __name__ == '__main__':
     m.zero(True, True, True)
     app.exec_()
     m.cnc.disconnect()
+    sys.exit()
